@@ -1,0 +1,15 @@
+[package]
+name = "indent-display"
+version = "0.1.0"
+edition = "2018"
+readme = "README.md"
+authors = ["Gavin J Stark"]
+description = "Indented display formatter"
+homepage = "https://github.com/atthecodeface/indent-display"
+documentation = "https://docs.rs/indent-display"
+keywords = ["string", "indentation", "hierarchy", "indent"]
+categories = ["value-formatting"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/atthecodeface/indent-display"
+
+
