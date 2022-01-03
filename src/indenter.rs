@@ -20,7 +20,7 @@ limitations under the License.
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use crate::{IndentedOptions};
+use crate::IndentedOptions;
 
 //a Type aliases
 type IOResult = std::result::Result<(), std::io::Error>;
@@ -38,7 +38,7 @@ struct Root<'a, Opt: IndentedOptions<'a>> {
     /// The options the indenter was created with
     options: &'a Opt,
     /// Set if a newline is pending
-    pending_newline : bool,
+    pending_newline: bool,
     /// Boolean set to true if at the start of a line - so if real
     /// characters are to be output, the appropriate indentation must
     /// be performed first
@@ -63,7 +63,7 @@ impl<'a, Opt: IndentedOptions<'a>> Root<'a, Opt> {
         Self {
             fmt,
             options,
-            pending_newline : false,
+            pending_newline: false,
             sol: true,
             ind,
             subind,
@@ -90,7 +90,7 @@ impl<'a, Opt: IndentedOptions<'a>> Root<'a, Opt> {
     ///
     /// This may involve popping the top of subind, if that is for the
     /// indentation depth being popped
-    fn pop_indent(&mut self, depth: usize)  {
+    fn pop_indent(&mut self, depth: usize) {
         self.pending_newline = true;
         if let Some((d, _)) = self.subind.last() {
             if *d == depth {
@@ -280,6 +280,33 @@ impl<'a, Opt: IndentedOptions<'a>> Inner<'a, Opt> {
         }))
     }
 
+    //fi pop
+    /// Create a subnode of this stack frame, with an optional
+    /// depth-specific indentation string
+    fn pop(self) -> Option<RrcInner<'a, Opt>> {
+        if let Some(parent) = &self.parent {
+            Some(parent.clone())
+        } else {
+            None
+        }
+    }
+
+    //fi take_parent
+    /// Provided this [Inner] has a parent (panic otherwise), return
+    /// that parent by deconstructing this
+    ///
+    /// This node must not be borrowed elsewhere for this to work,
+    /// as it cannot be deconstructed if so
+    fn take_parent(s: Rc<RefCell<Self>>) -> RrcInner<'a, Opt> {
+        assert!(s.borrow().parent.is_some());
+        match Rc::try_unwrap(s) {
+            Err(_) => {
+                panic!("Indent was multiply borrowed");
+            }
+            Ok(x) => x.into_inner().pop().unwrap(),
+        }
+    }
+
     //zz All done
 }
 
@@ -333,6 +360,13 @@ impl<'a, Opt: IndentedOptions<'a>> Indenter<'a, Opt> {
     /// means it is static.
     pub fn push(&self, s: &'a str) -> Self {
         let node = Inner::subnode(&self.node, Some(s));
+        Self { node }
+    }
+
+    //dp pop
+    /// Pop this subframe and return its parent
+    pub fn pop(self) -> Self {
+        let node = Inner::take_parent(self.node);
         Self { node }
     }
 

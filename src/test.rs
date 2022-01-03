@@ -140,7 +140,7 @@ __4
 
     #[test]
     fn test_types() {
-        use crate::{IndentedDisplay};
+        use crate::IndentedDisplay;
         let mut r = Vec::new();
         let mut ind = Indenter::new(&mut r, "    ", &Options { ind_leaves: false });
         let output = r###"[
