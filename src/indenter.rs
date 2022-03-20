@@ -313,13 +313,13 @@ impl<'a, Opt: IndentedOptions<'a>> Inner<'a, Opt> {
 //a Indenter
 //tp Indenter
 /// The public face of the library, this is the type that must be
-/// created to use the [IndentedDisplay] trait
+/// created to use the [crate::IndentedDisplay] trait
 ///
 /// This utilizes a [std::fmt::Write] formatter as its output, a base
 /// indent string that is used for all levels of indentation (unless
 /// overridden individually by indentation frames), and an options
 /// structure that contains options that may be interrogated by the
-/// implementation of IndentedDisplay
+/// implementation of [crate::IndentedDisplay]
 pub struct Indenter<'a, Opt: IndentedOptions<'a>> {
     node: RrcInner<'a, Opt>,
 }
@@ -328,7 +328,7 @@ pub struct Indenter<'a, Opt: IndentedOptions<'a>> {
 impl<'a, Opt: IndentedOptions<'a>> Indenter<'a, Opt> {
     //fp new
     /// Create a new [Indenter], to be used with types that implement
-    /// the IndentedDisplay trait; this specifies the formatter, the
+    /// the [crate::IndentedDisplay] trait; this specifies the formatter, the
     /// base indentation string, and the options for the indentation
     pub fn new(fmt: &'a mut (dyn std::io::Write + 'a), s: &'a str, options: &'a Opt) -> Self {
         let r = Rc::new(RefCell::new(Root::new(fmt, s, options)));
@@ -339,7 +339,7 @@ impl<'a, Opt: IndentedOptions<'a>> Indenter<'a, Opt> {
     //fp sub
     /// Create a new subframe of the [Indenter] using its base
     /// indentation for this indentation level; this is invoked by the
-    /// `indent` function in an [IndentedDisplay] trait implementation
+    /// `indent` function in an [crate::IndentedDisplay] trait implementation
     /// to create subframes of indentation. The subframe is removed
     /// from the indentation output stack when it is *dropped*, so it
     /// must either go out of scope or be explicitly dropped.
@@ -351,7 +351,7 @@ impl<'a, Opt: IndentedOptions<'a>> Indenter<'a, Opt> {
     //fp push
     /// Create a new subframe of the [Indenter] using a specific string,
     /// indentation for this indentation level; this is invoked by the
-    /// `indent` function in an [IndentedDisplay] trait implementation
+    /// `indent` function in an [crate::IndentedDisplay] trait implementation
     /// to create subframes of indentation. The subframe is removed
     /// from the indentation output stack when it is *dropped*, so it
     /// must either go out of scope or be explicitly dropped.
@@ -374,7 +374,7 @@ impl<'a, Opt: IndentedOptions<'a>> Indenter<'a, Opt> {
     /// Borrow the options used to invoke the [Indenter].
     ///
     /// This may be invoked by the
-    /// `indent` function in an [IndentedDisplay] trait implementation
+    /// `indent` function in an [crate::IndentedDisplay] trait implementation
     /// to determine the setting of indentation options that may affect its output.
     pub fn options(&self) -> &Opt {
         &self.node.borrow().root.borrow().options
